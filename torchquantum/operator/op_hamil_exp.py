@@ -56,13 +56,15 @@ class OpHamilExp(QuantumModule):
         super().__init__()
         if trainable:
             self.theta = torch.nn.parameter.Parameter(torch.tensor(theta))
+        elif isinstance(theta, torch.Tensor):
+            self.theta = theta
         else:
             self.theta = torch.tensor(theta)
         self.hamil = hamil
 
     def get_exponent_matrix(self):
         """Get the matrix on exponent."""
-        return self.hamil.matrix * -1j * self.theta / 2
+        return self.hamil.matrix * -1j * self.theta.view(-1, 1, 1) / 2
 
     @property
     def exponent_matrix(self):
